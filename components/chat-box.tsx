@@ -131,20 +131,15 @@ function ChatMessage({
       )}
       <p
         className={cn(
-          "rounded-md px-4 py-2 max-w-sm text-sm ",
+          "rounded-md px-4 py-2 sm:max-w-sm md:max-w-md text-sm ",
           isAiMessage ? "bg-primary/10" : "bg-primary/10"
         )}
       >
-        <div>
-          {content === "BeatLoader" ? (
-            <BeatLoader
-              color={theme === "light" ? "black" : "white"}
-              size={5}
-            />
-          ) : (
-            <div>{content}</div>
-          )}
-        </div>
+        {content === "BeatLoader" ? (
+          <BeatLoader color={theme === "light" ? "black" : "white"} size={5} />
+        ) : (
+          <div>{content}</div>
+        )}
       </p>
       {!isAiMessage && user?.imageUrl && (
         <Image
