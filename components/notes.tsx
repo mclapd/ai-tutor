@@ -5,11 +5,7 @@ import Link from "next/link";
 import { MessagesSquare } from "lucide-react";
 
 interface NoteCardProps {
-  allNotes: (Note & {
-    _count: {
-      messages: number;
-    };
-  })[];
+  allNotes: Note[];
 }
 
 const Notes = ({ allNotes }: NoteCardProps) => {
@@ -48,7 +44,6 @@ const Notes = ({ allNotes }: NoteCardProps) => {
               <p className="lowercase">@Hi</p>
               <div className="flex items-center">
                 <MessagesSquare className="w-3 h-3 mr-1" />
-                {/* {tutor._count.messages} */}
               </div>
             </CardFooter>
           </Link>

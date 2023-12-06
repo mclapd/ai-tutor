@@ -32,15 +32,18 @@ export async function POST(req: Request) {
       },
     });
 
-    console.log("Relevant notes found: ", relevantNotes);
+    // console.log("Relevant notes found: ", relevantNotes);
 
     const systemMessage: ChatCompletionMessage = {
-      role: "system",
+      role: "assistant",
       content:
-        "You are an intelligent note-taking app. You answer the user's question based on their existing notes. " +
-        "The relevant notes for this query are:\n" +
+        "You are an intelligent tutoring app. You answer the user's question based on their existing answer history. " +
+        "The relevant answer history for this query are:\n" +
         relevantNotes
-          .map((note) => `Title: ${note.title}\n\nContent:\n${note.content}`)
+          .map(
+            (note) =>
+              `Name: ${note.name}\n\nInstructions:\n${note.instructions}`
+          )
           .join("\n\n"),
     };
 

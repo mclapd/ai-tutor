@@ -10,14 +10,7 @@ import { useEffect, useRef } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
-interface AIChatBoxProps {
-  open: boolean;
-  onClose: () => void;
-}
-
-const ChatBox = ({ open, onClose }: AIChatBoxProps) => {
-  open = true;
-
+const ChatBox = () => {
   const {
     messages,
     input,
@@ -38,23 +31,13 @@ const ChatBox = ({ open, onClose }: AIChatBoxProps) => {
   }, [messages]);
 
   useEffect(() => {
-    if (open) {
-      inputRef.current?.focus();
-    }
-  }, [open]);
+    inputRef.current?.focus();
+  }, []);
 
   const lastMessageIsUser = messages[messages.length - 1]?.role === "user";
 
   return (
-    <div
-      className={cn(
-        "bottom-0 right-0 z-10 w-full max-w-[500px] p-1 xl:right-36",
-        open ? "fixed" : "hidden"
-      )}
-    >
-      {/* <button onClick={onClose} className="mb-1 ms-auto block">
-        <XCircle size={30} />
-      </button> */}
+    <div className="bottom-0 right-0 z-10 w-full max-w-[500px] p-1 xl:right-36 fixed">
       <div className="flex h-[800px] flex-col rounded border bg-background shadow-xl">
         <div className="mt-3 h-full overflow-y-auto px-3" ref={scrollRef}>
           {messages.map((message) => (
