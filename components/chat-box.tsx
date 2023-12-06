@@ -4,12 +4,14 @@ import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 import { Message } from "ai";
 import { useChat } from "ai/react";
-import { Bot, SendHorizonal, Trash, XCircle } from "lucide-react";
+import { SendHorizonal } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Note } from "@prisma/client";
+import { BeatLoader } from "react-spinners";
+import { useTheme } from "next-themes";
 
 const ChatBox = ({ note }: { note: Note }) => {
   const {
@@ -24,6 +26,7 @@ const ChatBox = ({ note }: { note: Note }) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -50,7 +53,12 @@ const ChatBox = ({ note }: { note: Note }) => {
                 note={note}
                 message={{
                   role: "assistant",
-                  content: "Thinking...",
+                  content: (
+                    <BeatLoader
+                      color={theme === "light" ? "black" : "white"}
+                      size={5}
+                    />
+                  ),
                 }}
               />
             )}
@@ -118,7 +126,6 @@ function ChatMessage({
       )}
     >
       {isAiMessage && (
-        // <Bot className="mr-2 shrink-0" />
         <Image
           src={note.src}
           alt="User image"
@@ -129,8 +136,8 @@ function ChatMessage({
       )}
       <p
         className={cn(
-          "whitespace-pre-line rounded-md border px-3 py-2",
-          isAiMessage ? "bg-background" : "bg-primary text-primary-foreground"
+          "rounded-md px-4 py-2 max-w-sm text-sm ",
+          isAiMessage ? "bg-primary/10" : "bg-primary/10"
         )}
       >
         {content}
