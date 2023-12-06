@@ -23,19 +23,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Wand2 } from "lucide-react";
 import ImageUpload from "@/components/image-upload";
 
-const formSchema = z.object({
-  name: z.string().min(1, {
-    message: "Name is required.",
-  }),
-  description: z.string().min(1, {
-    message: "Description is required.",
-  }),
-  src: z.string().min(1, {
-    message: "Image is required.",
-  }),
-  instructions: z.string().optional(),
-});
-
 interface NoteFormProps {
   // open: boolean;
   // setOpen: (open: boolean) => void;
@@ -51,6 +38,8 @@ const NoteForm = ({ noteToEdit }: NoteFormProps) => {
     defaultValues: {
       name: noteToEdit?.name || "",
       description: noteToEdit?.description || "",
+      src: noteToEdit?.src || "",
+      instructions: noteToEdit?.instructions || "",
     },
   });
 
@@ -60,7 +49,7 @@ const NoteForm = ({ noteToEdit }: NoteFormProps) => {
     try {
       if (noteToEdit) {
         const response = await fetch("/api/notes", {
-          method: "PUT",
+          method: "PATCH",
           body: JSON.stringify({
             id: noteToEdit.id,
             ...input,

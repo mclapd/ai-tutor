@@ -1,10 +1,10 @@
-// import { notesIndex } from "@/lib/db/pinecone";
+import { notesIndex } from "@/lib/db/pinecone";
 import prisma from "@/lib/db/prisma";
-// import { getEmbedding } from "@/lib/openai";
+import { getEmbedding } from "@/lib/openai";
 import {
   createNoteSchema,
-  // deleteNoteSchema,
-  // updateNoteSchema,
+  deleteNoteSchema,
+  updateNoteSchema,
 } from "@/lib/validation/note";
 import { auth } from "@clerk/nextjs";
 
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // const embedding = await getEmbeddingForNote(name, description);
+    const embedding = await getEmbeddingForNote(name, instructions);
 
     const note = await prisma.$transaction(async (tx) => {
       const note = await tx.note.create({
@@ -40,13 +40,13 @@ export async function POST(req: Request) {
         },
       });
 
-      // await notesIndex.upsert([
-      //   {
-      //     id: note.id,
-      //     values: embedding,
-      //     metadata: { userId },
-      //   },
-      // ]);
+      await notesIndex.upsert([
+        {
+          id: note.id,
+          values: embedding,
+          metadata: { userId },
+        },
+      ]);
 
       return note;
     });
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
   }
 }
 
-export async function PUT(req: Request) {
+export async function PATCH(req: Request) {
   try {
     const body = await req.json();
 
@@ -69,7 +69,7 @@ export async function PUT(req: Request) {
       return Response.json({ error: "Invalid input" }, { status: 400 });
     }
 
-    const { id, name, description } = parseResult.data;
+    const { id, name, description, src, instructions } = parseResult.data;
 
     const note = await prisma.note.findUnique({ where: { id } });
 
@@ -83,7 +83,7 @@ export async function PUT(req: Request) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const embedding = await getEmbeddingForNote(name, description);
+    const embedding = await getEmbeddingForNote(name, instructions);
 
     const updatedNote = await prisma.$transaction(async (tx) => {
       const updatedNote = await tx.note.update({
@@ -91,6 +91,8 @@ export async function PUT(req: Request) {
         data: {
           name,
           description,
+          src,
+          instructions,
         },
       });
 
@@ -151,7 +153,7 @@ export async function DELETE(req: Request) {
 
 async function getEmbeddingForNote(
   name: string,
-  description: string | undefined
+  instructions: string | undefined
 ) {
-  return getEmbedding(name + "\n\n" + description ?? "");
+  return getEmbedding("My name is " + name + "\n\n" + instructions ?? "");
 }
