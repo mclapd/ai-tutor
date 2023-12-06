@@ -26,7 +26,6 @@ const ChatBox = ({ note }: { note: Note }) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { theme } = useTheme();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -53,12 +52,7 @@ const ChatBox = ({ note }: { note: Note }) => {
                 note={note}
                 message={{
                   role: "assistant",
-                  content: (
-                    <BeatLoader
-                      color={theme === "light" ? "black" : "white"}
-                      size={5}
-                    />
-                  ),
+                  content: "BeatLoader",
                 }}
               />
             )}
@@ -115,6 +109,7 @@ function ChatMessage({
   note: Note;
 }) {
   const { user } = useUser();
+  const { theme } = useTheme();
 
   const isAiMessage = role === "assistant";
 
@@ -140,7 +135,16 @@ function ChatMessage({
           isAiMessage ? "bg-primary/10" : "bg-primary/10"
         )}
       >
-        {content}
+        <div>
+          {content === "BeatLoader" ? (
+            <BeatLoader
+              color={theme === "light" ? "black" : "white"}
+              size={5}
+            />
+          ) : (
+            <div>{content}</div>
+          )}
+        </div>
       </p>
       {!isAiMessage && user?.imageUrl && (
         <Image
