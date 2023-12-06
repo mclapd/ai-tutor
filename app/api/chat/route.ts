@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     const systemMessage: ChatCompletionMessage = {
       role: "assistant",
       content:
-        "You are an intelligent tutoring app. You answer the user's question based on their existing answer history. " +
+        "Your name, role, and acting instruction can be found at below . You answer the user's question based on their existing answer history. " +
         "The relevant answer history for this query are:\n" +
         relevantNotes
           .map(

@@ -9,8 +9,9 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Note } from "@prisma/client";
 
-const ChatBox = () => {
+const ChatBox = ({ note }: { note: Note }) => {
   const {
     messages,
     input,
@@ -37,46 +38,60 @@ const ChatBox = () => {
   const lastMessageIsUser = messages[messages.length - 1]?.role === "user";
 
   return (
-    <div className="bottom-0 right-0 z-10 w-full max-w-[500px] p-1 xl:right-36 fixed">
-      <div className="flex h-[800px] flex-col rounded border bg-background shadow-xl">
-        <div className="mt-3 h-full overflow-y-auto px-3" ref={scrollRef}>
-          {messages.map((message) => (
-            <ChatMessage message={message} key={message.id} />
-          ))}
-          {isLoading && lastMessageIsUser && (
-            <ChatMessage
-              message={{
-                role: "assistant",
-                content: "Thinking...",
-              }}
+    <div className="flex flex-col h-full p-4 space-y-2">
+      <div>
+        <div className="h-[700px] rounded border">
+          <div className="mt-3 h-full overflow-y-auto px-3" ref={scrollRef}>
+            {messages.map((message) => (
+              <ChatMessage note={note} message={message} key={message.id} />
+            ))}
+            {isLoading && lastMessageIsUser && (
+              <ChatMessage
+                note={note}
+                message={{
+                  role: "assistant",
+                  content: "Thinking...",
+                }}
+              />
+            )}
+            {error && (
+              <ChatMessage
+                note={note}
+                message={{
+                  role: "assistant",
+                  content: "",
+                }}
+              />
+            )}
+            {!error && messages.length === 0 && (
+              <div className="flex h-full items-center justify-center gap-3">
+                <Image
+                  src={note.src}
+                  alt="User image"
+                  width={100}
+                  height={100}
+                  className="mr-5 h-50 w-50 rounded-full object-cover"
+                />
+                Ask questions to {note.name} about anything
+              </div>
+            )}
+          </div>
+          <form
+            onSubmit={handleSubmit}
+            className="border-t border-primary/10 py-4 flex items-center gap-x-2"
+          >
+            <Input
+              value={input}
+              onChange={handleInputChange}
+              placeholder="Say something..."
+              ref={inputRef}
+              className="rounded-lg bg-primary/10"
             />
-          )}
-          {error && (
-            <ChatMessage
-              message={{
-                role: "assistant",
-                content: "",
-              }}
-            />
-          )}
-          {!error && messages.length === 0 && (
-            <div className="flex h-full items-center justify-center gap-3">
-              <Bot />
-              Ask the AI a question about your notes
-            </div>
-          )}
+            <Button type="submit" variant="ghost">
+              <SendHorizonal className="h-5 w-5" />
+            </Button>
+          </form>
         </div>
-        <form onSubmit={handleSubmit} className="m-3 flex gap-1">
-          <Input
-            value={input}
-            onChange={handleInputChange}
-            placeholder="Say something..."
-            ref={inputRef}
-          />
-          <Button type="submit" variant="ghost">
-            <SendHorizonal className="h-5 w-5" />
-          </Button>
-        </form>
       </div>
     </div>
   );
@@ -86,8 +101,10 @@ export default ChatBox;
 
 function ChatMessage({
   message: { role, content },
+  note,
 }: {
   message: Pick<Message, "role" | "content">;
+  note: Note;
 }) {
   const { user } = useUser();
 
@@ -100,7 +117,16 @@ function ChatMessage({
         isAiMessage ? "me-5 justify-start" : "ms-5 justify-end"
       )}
     >
-      {isAiMessage && <Bot className="mr-2 shrink-0" />}
+      {isAiMessage && (
+        // <Bot className="mr-2 shrink-0" />
+        <Image
+          src={note.src}
+          alt="User image"
+          width={100}
+          height={100}
+          className="mr-5 h-8 w-8 rounded-full object-cover"
+        />
+      )}
       <p
         className={cn(
           "whitespace-pre-line rounded-md border px-3 py-2",
@@ -115,7 +141,7 @@ function ChatMessage({
           alt="User image"
           width={100}
           height={100}
-          className="ml-2 h-10 w-10 rounded-full object-cover"
+          className="ml-5 h-8 w-8 rounded-full object-cover"
         />
       )}
     </div>

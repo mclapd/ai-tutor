@@ -15,7 +15,7 @@ const NoteIdPage = async ({ params }: NoteIdPageProps) => {
     return redirectToSignIn();
   }
 
-  console.log(params);
+  // console.log(params);
 
   let note;
 
