@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 import { Message } from "ai";
 import { useChat } from "ai/react";
-import { Bot, Trash, XCircle } from "lucide-react";
+import { Bot, SendHorizonal, Trash, XCircle } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { Button } from "./ui/button";
@@ -52,10 +52,10 @@ const ChatBox = ({ open, onClose }: AIChatBoxProps) => {
         open ? "fixed" : "hidden"
       )}
     >
-      <button onClick={onClose} className="mb-1 ms-auto block">
+      {/* <button onClick={onClose} className="mb-1 ms-auto block">
         <XCircle size={30} />
-      </button>
-      <div className="flex h-[600px] flex-col rounded border bg-background shadow-xl">
+      </button> */}
+      <div className="flex h-[800px] flex-col rounded border bg-background shadow-xl">
         <div className="mt-3 h-full overflow-y-auto px-3" ref={scrollRef}>
           {messages.map((message) => (
             <ChatMessage message={message} key={message.id} />
@@ -84,23 +84,15 @@ const ChatBox = ({ open, onClose }: AIChatBoxProps) => {
           )}
         </div>
         <form onSubmit={handleSubmit} className="m-3 flex gap-1">
-          <Button
-            title="Clear chat"
-            variant="outline"
-            size="icon"
-            className="shrink-0"
-            type="button"
-            onClick={() => setMessages([])}
-          >
-            <Trash />
-          </Button>
           <Input
             value={input}
             onChange={handleInputChange}
             placeholder="Say something..."
             ref={inputRef}
           />
-          <Button type="submit">Send</Button>
+          <Button type="submit" variant="ghost">
+            <SendHorizonal className="h-5 w-5" />
+          </Button>
         </form>
       </div>
     </div>
